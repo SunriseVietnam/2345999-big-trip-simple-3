@@ -12,8 +12,8 @@ function createElement(template) {
   return newElement.firstElementChild;
 }
 
-async function render(component, container, place = RenderPosition.BEFOREEND) {
-  await container.insertAdjacentElement(place, component.element);
+function render(component, container, place = RenderPosition.BEFOREEND) {
+  container.insertAdjacentElement(place, component.element);
 }
 
 export {RenderPosition, createElement, render};

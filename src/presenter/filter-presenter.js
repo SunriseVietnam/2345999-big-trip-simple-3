@@ -33,7 +33,7 @@ export default class FilterPresenter {
     });
 
     if (!prevFilterComponent) {
-      setTimeout(() => render(this.#filterComponent, this.#filterContainer),3000);
+      render(this.#filterComponent, this.#filterContainer);
       return;
     }
 

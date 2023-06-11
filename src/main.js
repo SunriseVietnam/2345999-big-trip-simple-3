@@ -59,5 +59,5 @@ filterPresenter.init();
 boardPresenter.init();
 tripPointsModel.init()
   .finally(() => {
-    setTimeout(() => render(newTripPointButtonComponent, siteHeaderElement),2000);
+    render(newTripPointButtonComponent, siteHeaderElement);
   });

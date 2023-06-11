@@ -29,7 +29,7 @@ export default class TripPointPresenter {
     this.#handleDataChange = onDataChange;
   }
 
-  init(tripPoint, destinations, offers) {
+  async init(tripPoint, destinations, offers) {
     this.#tripPoint = tripPoint;
     this.#destinations = destinations;
     this.#offers = offers;
@@ -54,7 +54,11 @@ export default class TripPointPresenter {
     });
 
     if (prevTripPointComponent === null || prevEditFormComponent === null) {
-      setTimeout(() => render(this.#tripPointComponent, this.#tripPointList),2000);
+      const [tripPointComp, tripPointLst] = await Promise.all([
+        this.#tripPointComponent,
+        this.#tripPointList
+      ])
+      setTimeout(() => render(tripPointComp, tripPointLst),2000);
       return;
     }
 

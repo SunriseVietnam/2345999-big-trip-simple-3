@@ -131,21 +131,33 @@ export default class BoardPresenter {
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
-        setTimeout(() => remove(this.#loadingComponent),900);
-        setTimeout(() => this.#renderBoard(),1000);
+        this.#initLoading();
         break;
     }
   };
-
-  #renderLoading() {
-    setTimeout(() => render(this.#loadingComponent, this.#boardContainer, RenderPosition.AFTERBEGIN),100);
+  async #initLoading() {
+    const loadingComp = await this.#loadingComponent;
+    await remove(loadingComp);
+    const resolvedPromise = new Promise((resolve) => {setTimeout(()=>{resolve()}, 100)});
+    resolvedPromise.then(()=>{this.#renderBoard()});
+  }
+  async #renderLoading() {
+    const [loadingComp, board] = await Promise.all([
+      this.#loadingComponent,
+      this.#boardContainer
+    ])
+    render(loadingComp, board, RenderPosition.AFTERBEGIN);
   }
 
-  #renderNoTripPoints() {
+  async #renderNoTripPoints() {
     this.#noTripPointComponent = new NoPointsView({
       filterType: this.#filterType
     });
-    setTimeout(() => render(this.#noTripPointComponent, this.#boardContainer, RenderPosition.AFTERBEGIN ),2000);
+    const [noTripPointComp, board] = await Promise.all([
+      this.#noTripPointComponent,
+      this.#boardContainer
+    ])
+    render(noTripPointComp, board, RenderPosition.AFTERBEGIN );
   }
 
   #handleModeChange = () => {
@@ -157,18 +169,21 @@ export default class BoardPresenter {
     if (this.#currentSortType === sortType) {
       return;
     }
-
     this.#currentSortType = sortType;
     this.#clearBoard();
     this.#renderBoard();
   };
 
-  #renderSort() {
+  async #renderSort() {
     this.#sortComponent = new SortView({
       currentSortType: this.#currentSortType,
       onSortTypeChange: this.#handleSortTypeChange
     });
-    setTimeout(() => render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN),2000);
+    const [sortComp, board] = await Promise.all([
+      this.#sortComponent,
+      this.#boardContainer
+    ])
+    render(sortComp, board, RenderPosition.AFTERBEGIN);
   }
 
   #renderTripPoint(tripPoint) {
@@ -214,10 +229,12 @@ export default class BoardPresenter {
       this.#renderNoTripPoints();
       return;
     }
-
     this.#renderSort();
-    setTimeout(() => render(this.#tripPointsListComponent, this.#boardContainer),2000);
-
+    const [tripPointsList, board] = await Promise.all([
+      this.#tripPointsListComponent,
+      this.#boardContainer
+    ])
+    render(tripPointsList, board)
     try{
       this.#renderTripPoints(tripPoints);
     }catch(err) {

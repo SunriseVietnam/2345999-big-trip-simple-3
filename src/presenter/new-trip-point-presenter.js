@@ -16,7 +16,7 @@ export default class NewTripPointPresenter {
     this.#handleDestroy = onDestroy;
   }
 
-  init(destinations, offers) {
+  async init(destinations, offers) {
     if (this.#tripPointEditComponent !== null) {
       return;
     }
@@ -28,9 +28,11 @@ export default class NewTripPointPresenter {
       onDeleteClick: this.#handleDeleteClick,
       isEditForm: false
     });
-
-    setTimeout(() => render(this.#tripPointEditComponent, this.#tripPointListContainer,
-      RenderPosition.AFTERBEGIN),2000);
+    const [tripPointEditComp, tripPointListCont] = await Promise.all([
+      this.#tripPointEditComponent,
+      this.#tripPointListContainer
+    ])
+    render(tripPointEditComp, tripPointListCont, RenderPosition.AFTERBEGIN);
 
     document.body.addEventListener('keydown', this.#ecsKeyDownHandler);
   }
